@@ -1,0 +1,155 @@
+.ds-canvas {
+	position: absolute;
+	width: 80%;
+	height: 80%;
+	margin: 0;
+	padding: 0;
+	border: 1px solid #000;
+	overflow: hidden;
+}
+.ds-canvas-viewport {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	margin: 0;
+	padding: 0;
+	overflow: scroll;
+}
+.ds-canvas-scrollport {
+	width: 300%;
+	height: 300%;
+	position: absolute;
+	overflow: hidden;
+}
+
+.ds-canvas-templatelayer {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 100%;
+}
+
+.ds-canvas-metalayer {
+	position: absolute;
+	top:0;
+	left:0;
+	height: 100%;
+	width: 100%;
+}
+.ds-canvas-contentlayer {
+	position: absolute;
+	top:0;
+	left:0;
+	height: 100%;
+	width: 100%;
+}
+.ds-canvas-guide {
+	position: absolute;
+	background: cyan;
+	cursor: row-resize;
+}
+.ds-canvas-guide-horizontal {
+	cursor: row-resize;
+	width: 100%;
+	height: 1px;
+	left: 0;
+}
+.ds-canvas-guide-vertical {
+	cursor: col-resize;
+	width: 1px;
+	height: 100%;
+	top: 0;
+}
+.ds-canvas-item {
+	position: absolute;
+	background: red;
+	overflow: hidden;
+}
+.ds-canvas-item-selected {
+	
+}
+.ds-canvas-selectframe {
+	position: absolute;
+	border: 1px solid rgba(128,128,128,0.3);
+	box-sizing: border-box;
+}
+.ds-canvas-selectframe-handle {
+	display: none;
+	position: absolute;
+	width: 5px;
+	height: 5px;
+	background: #fff;
+	border: 1px solid #000;				
+}
+.ds-selected .ds-canvas-selectframe-handle {
+	display: block;
+}
+.ds-canvas-selectframe-handle-nw {
+	top: -3px;
+	left: -3px;
+	cursor: nw-resize;
+}
+.ds-canvas-selectframe-handle-n {
+	top: -3px;
+	left: 50%;
+	margin: 0 3px 0 -3px;
+	cursor: n-resize;
+}
+.ds-canvas-selectframe-handle-ne {
+	top: -3px;
+	right: -3px;
+	cursor: ne-resize;
+}
+.ds-canvas-selectframe-handle-e {
+	top: 50%;
+	right: -3px;
+	margin: -3px 0 3px 0;
+	cursor: e-resize;
+}
+.ds-canvas-selectframe-handle-se {
+	bottom: -3px;
+	right: -3px;
+	cursor: se-resize;
+}
+.ds-canvas-selectframe-handle-s {
+	bottom: -3px;
+	left: 50%;
+	margin: 0 3px 0 -3px;
+	cursor: s-resize;
+}
+.ds-canvas-selectframe-handle-sw {
+	bottom: -3px;
+	left: -3px;
+	cursor: sw-resize;
+}
+.ds-canvas-selectframe-handle-w {
+	top: 50%;
+	left: -3px;
+	margin: -3px 0 3px 0;
+	cursor: w-resize;
+}
+.ds-canvas-multipleselect {
+	position: absolute;
+	background: #EEE;
+	border: 1px solid #888;
+	opacity: 0.5;
+	display: none;
+}
+
+.ds-canvas-ruler-container-vertical {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 100%;
+	width: 10px;
+	background: red;
+}
+.ds-canvas-ruler-container-horizontal {
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 10px;
+	width: 100%;
+	background: red;
+}

@@ -1,9 +1,224 @@
 <!Doctype html>
 <html>
-<head>
-	<title></title>
-</head>
-<body>
+	<head>
+		<title>DocSnyderJS</title>
+		<style type="text/css">
+			html, body, #container {
+				width: 100%;
+				height: 100%;
+				margin: 0;
+				padding: 0;
+			}
+			.layout-module {
+				overflow: hidden;
+			}
+			#canvas {
+				background: #bfbfbf;
+				width: 100%;
+				height: 100%;
+				position: relative;
+				margin: 0;
+				padding: 0;
+			}
+			#assistant-layer {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+			#page {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+			}
+			#page-background {
+				position: absolute;
+				top: 50%;
+				left: 50%;
+				margin-top: -240px;
+				margin-left: -320px;
+				width: 640px;
+				height: 480px;
+				background: #fff;
+				border: 1px solid #000;
+				box-shadow: 1px 1px 0 #000;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="container">
+			<div class="layout-module ui-layout-north"></div>
+			<div class="layout-module layout-scrollable ui-layout-center">
+				<div id="canvas">
+					<div id="page">
+						<div id="page-background"></div>
+					</div>
+					<div id="assistant-layer"></div>
+				</div>
+			</div>
+			<div class="layout-module ui-layout-west"></div>
+		</div>
 
-</body>
+		<!-- Framework imports -->
+		<script type="text/javascript" src="jQuery-1.8.2.js"></script>
+		<script type="text/javascript" src="underscore.js"></script>
+		<script type="text/javascript" src="backbone.js"></script>
+		<script type="text/javascript" src="raphael.js"></script>
+
+		<!-- temporary LayoutManager -->
+		<script type="text/javascript" src="jquery.layout.js"></script>
+		<script type="text/javascript">
+			// declaring namespace in global scope
+			docSnyder = {
+				utils: {}
+			};
+
+			// The util-Functions are extended UnderscoreJS-Methods
+			_.extend(docSnyder.utils, _, {
+				move: function(array, index, where) {
+					if (index > 0 && where > 0) {
+						var extracted = array.splice(index, 1);
+						array.splice(--where, 0, extracted[0]);
+					}
+					return array;
+				}
+			});
+
+			docSnyder.Model = Backbone.Model.extend({
+				forwardEvent: function() {
+					this.trigger.call(this, arguments);
+				},
+				getSet: function(attributes) {
+					if (_.isArray(attributes)) {
+						for (var i = 0; i < attributes.length; i++) {
+							this[attributes[i]] = function(newValue) {
+								if (newValue !== undefined) {
+									this.set(attributes[i], newValue);
+								}
+								return this.get(attributes[i]);
+							}
+						}
+					}
+				}
+			});
+			docSnyder.List = Backbone.Collection.extend({
+				move: function(index, where) {
+					docSnyder.utils.move(this.models, index, where)
+				},
+				getSet: function(attributes) {
+					if (_.isArray(attributes)) {
+						for (var i = 0; i < attributes.length; i++) {
+							this[attributes[i]] = function(newValue) {
+								if (newValue !== undefined) {
+									this.set(attributes[i], newValue);
+								}
+								return this.get(attributes[i]);
+							}
+						}
+					}
+				}
+			});
+/*			docSnyder.View = Backbone.View;
+			var Position = docSnyder.Model.extend({
+				getCm: function() {
+
+				}
+			});
+			Position.Units = {
+				"PX": "px",
+				"CM": "cm",
+				"MM": "mm",
+				"IN": "in",
+				"PT": "pt",
+				"PERCENTAGE": "%"
+			}
+			docSnyder.Position = function (x, y, unit) {
+				if (isNaN(y)) {
+					unit = y;
+					y = 0;
+				}
+				if (_.isUndefined(unit)) {
+					unit = "px"
+				}
+				return new Position({x: x, y: y, unit: unit});
+			}*/
+		</script>
+
+		<script type="text/javascript">
+		/*
+			var a = $("#container").layout({
+				applyDefaultStyles: true
+			});
+			$(".layout-scrollable").append("<div class='layout-scrollable-content' />");
+
+			var pageAttr = {
+				width: 640,
+				height: 480
+			}
+
+			var assistantLayer = $("#assistant-layer"), 
+				w = Math.max(assistantLayer.width(), pageAttr.width), 
+				h = Math.max(assistantLayer.height(), pageAttr.height),
+				paper = Raphael("assistant-layer", w, h);
+			paper.clear();
+
+			var Guide = docSnyder.Model.extend({
+				initialize: function(attr) {
+					this.set({
+						horizontal: attr.alignment === "horizontal",
+						position: attr.position
+					})
+				}
+			})
+			var GuidesList = docSnyder.List.extend({
+				model: Guide,
+				initialize: function() {
+					this.on("add", function(m) {
+						m.on("change:position", this.forwardEvent, this)
+					}, this)
+				}
+			})
+			var GuidesView = docSnyder.View.extend({
+				initialize: function() {
+					this.collection.on("add change:position", this.render, this);
+					this.render();
+				},
+				render: function() {
+					console.log("render")
+					paper.clear();
+					this.collection.each(function(m) {
+						var pos = m.get("position");
+						if (m.get("horizontal")) {
+							paper.path("M" + pos + ",0l0," + h);
+						} else {
+							paper.path("M0," + pos + "l" + w + ",0");
+						}
+					})
+				}
+			});
+
+			var c = new GuidesList([{position: 200, alignment: "horizontal"}]),
+				v = new GuidesView({
+					collection: c,
+					el: paper
+				})
+			docSnyder.c = c;
+			*/
+		</script>
+
+		<script type="text/javascript" src="DocSnyder/LanguagePack.js"></script>
+		<script type="text/javascript" src="DocSnyder/Defaults.js"></script>
+
+		<script type="text/javascript" src="DocSnyder/Item.js"></script>
+		<script type="text/javascript" src="DocSnyder/ItemCollection.js"></script>
+		<script type="text/javascript" src="DocSnyder/Page.js"></script>
+		<script type="text/javascript" src="DocSnyder/Document.js"></script>
+
+		<script type="text/javascript">
+			docSnyder.testDoc = new docSnyder.Document();
+		</script>
+	</body>
 </html>

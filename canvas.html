@@ -2,128 +2,51 @@
 <html>
 	<head>
 		<title>Canvas</title>
-		<style type="text/css">
-			html, body, .ds-canvas {
-				width: 100%;
-				height: 100%;
-				margin: 0;
-				padding: 0;
-			}
-			.ds-canvas {
-				position: relative;
-			}
-			.ds-canvas-metalayer {
-				position: absolute;
-				top:0;
-				left:0;
-				height: 100%;
-				width: 100%;
-			}
-			.ds-canvas-contentlayer {
-				position: absolute;
-				top:0;
-				left:0;
-				height: 100%;
-				width: 100%;
-			}
-			.ds-canvas-guide {
-				position: absolute;
-				background: cyan;
-				cursor: row-resize;
-			}
-			.ds-canvas-guide-horizontal {
-				cursor: row-resize;
-				width: 100%;
-				height: 1px;
-				left: 0;
-			}
-			.ds-canvas-guide-vertical {
-				cursor: col-resize;
-				width: 1px;
-				height: 100%;
-				top: 0;
-			}
-			.ds-canvas-item {
-				position: absolute;
-				background: red;
-				overflow: hidden;
-			}
-			.ds-canvas-item-selected {
-				
-			}
-			.ds-canvas-selectframe {
-				position: absolute;
-				border: 1px solid rgba(128,128,128,0.3);
-			}
-			.ds-canvas-selectframe-handle {
-				position: absolute;
-				width: 5px;
-				height: 5px;
-				background: #fff;
-				border: 1px solid #000;				
-			}
-			.ds-canvas-selectframe-handle-nw {
-				top: -3px;
-				left: -3px;
-				cursor: nw-resize;
-			}
-			.ds-canvas-selectframe-handle-n {
-				top: -3px;
-				left: 50%;
-				margin: 0 3px 0 -3px;
-				cursor: n-resize;
-			}
-			.ds-canvas-selectframe-handle-ne {
-				top: -3px;
-				right: -3px;
-				cursor: ne-resize;
-			}
-			.ds-canvas-selectframe-handle-e {
-				top: 50%;
-				right: -3px;
-				margin: -3px 0 3px 0;
-				cursor: e-resize;
-			}
-			.ds-canvas-selectframe-handle-se {
-				bottom: -3px;
-				right: -3px;
-				cursor: se-resize;
-			}
-			.ds-canvas-selectframe-handle-s {
-				bottom: -3px;
-				left: 50%;
-				margin: 0 3px 0 -3px;
-				cursor: s-resize;
-			}
-			.ds-canvas-selectframe-handle-sw {
-				bottom: -3px;
-				left: -3px;
-				cursor: sw-resize;
-			}
-			.ds-canvas-selectframe-handle-w {
-				top: 50%;
-				left: -3px;
-				margin: -3px 0 3px 0;
-				cursor: w-resize;
-			}
-			.ds-canvas-multipleselect {
-				position: absolute;
-				background: #EEE;
-				border: 1px solid #888;
-				opacity: 0.5;
-				display: none;
-			}
-		</style>
+		<link href="base.css" rel="stylesheet" type="text/css" />
+		<link href="canvas-base.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
 		<div class="ds-canvas">
-			<div class="ds-canvas-contentlayer"></div>
-			<div class="ds-canvas-metalayer"></div>
+			<div class="ds-canvas-viewport">
+				<div class="ds-canvas-scrollport">
+					<div class="ds-canvas-templatelayer">
+						<div class="ds-canvas-page"></div>
+					</div>
+					<div class="ds-canvas-contentlayer">
+						<div class="ds-canvas-page"></div>
+					</div>
+					<div class="ds-canvas-metalayer">
+						<div class="ds-canvas-page"></div>
+					</div>
+				</div>
+			</div>
+			<div class="ds-canvas-ruler-container ds-canvas-ruler-container-vertical">
+				<div class="ds-canvas-ruler ds-canvas-ruler-vertical"></div>
+			</div>
+			<div class="ds-canvas-ruler-container ds-canvas-ruler-container-horizontal">
+				<div class="ds-canvas-ruler ds-canvas-ruler-horizontal"></div>
+			</div>
 		</div>
+		<!-- Framework-Layer -->
 		<script type="text/javascript" src="jquery.js"></script>
 		<script type="text/javascript" src="underscore.js"></script>
 		<script type="text/javascript" src="backbone.js"></script>
-		<script type="text/javascript" src="jquery-ui-draggable.js"></script>
+
+		<!-- Polyfill- and Plugin-Layer -->
+		<script type="text/javascript" src="Underscore-Mixins.js"></script>
+		<script type="text/javascript" src="jquery.keybind.js"></script>
+		<script type="text/javascript" src="ds-keybinder.js"></script>
+		<script type="text/javascript" src="ds-undo.js"></script>
+
+		<!-- Application-Core-Layer -->
+		<script type="text/javascript" src="ds-Core.js"></script>
+		<script type="text/javascript" src="ds-Documenttree.js"></script>
+		<script type="text/javascript" src="ds-Canvas-Guides.js"></script>
+		<script type="text/javascript" src="ds-Canvas-Items.js"></script>
+		<script type="text/javascript" src="ds-Canvas-Snapmanager.js"></script>
+		<script type="text/javascript" src="ds-Canvas-Selectmanager.js"></script>
+		<script type="text/javascript" src="ds-Eventmanager.js"></script>
+		<script type="text/javascript" src="ds-Canvas-Viewportmanager.js"></script>
 		<script type="text/javascript" src="ds-canvas.js"></script>
 	</body>
 </html>
