@@ -5,17 +5,29 @@ _.mixin({
 	isNumber: function (nr) {
 		return typeof nr === "number" && !isNaN(nr);
 	},
+	round: function (nr, decPlaces) {
+		typeof decPlaces === "number" || (decPlaces = ~~decPlaces);
+		return Math.round(nr * Math.pow(10, decPlaces)) / Math.pow(10, decPlaces)
+	},
 	isJQuery: function (o) {
-		return jQuery && o instanceof jQuery;
+		return window.jQuery && o instanceof jQuery;
 	},
 	testPerformance: function(fn, duration) {
 		_.isNumber(duration) || (duration = 1000);
-		var end = Date.now() + duration, i = 0;
-		while (Date.now() < end) {
+		var end = performance.now() + duration, i = 0;
+		while (performance.now() < end) {
 			fn();
 			i++;
 		}
 		return i;
+	},
+	howLongDoesItTake: function (fn, repetitions) {
+		typeof repetitions == "number" || (repetitions = 10000);
+		var start = performance.now();
+		while (repetitions--) {
+			fn();
+		}
+		return performance.now() - start;
 	},
 	performanceAverage: function (fn, duration, nrOfTimes) {
 		_.isNumber(nrOfTimes) && nrOfTimes > 0 || (nrOfTimes = 10);

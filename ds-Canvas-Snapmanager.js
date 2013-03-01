@@ -2,16 +2,26 @@
 	if (!root || !global || !Backbone || !_ || !$) return;
 
 var guideList = root.guideList,
-	itemList = root.itemList;
+	itemList = root.itemList,
+	ScaleManager = root.ScaleManager;
 
 var SnapManager = new (Backbone.Model.extend({
+	initialize: function () {
+		ScaleManager.on("change", function (m,c) {
+			if (c && c.changes && (c.changes.scaleX || c.changes.scaleY)) {
+				this.range.set("range", ~~Math.round( 10 / ((m.get("scaleX") + m.get("scaleY"))/2) ))
+			}
+		}, this);
+	},
 	defaults: {
 		range: 10,
 		snapTo: {
 			guides: true,
 			itemsStart: false,
 			itemsCenter: false,
-			itemsEnd: false
+			itemsEnd: false,
+			page: true,
+			pageEnd: true
 		}
 	},
 	_getPositions: function (axis, type) {
@@ -49,11 +59,11 @@ var SnapManager = new (Backbone.Model.extend({
 			if (types[type]) {
 				if (type === "itemsStart") type = "items";
 				snapTo = this._getSnapPositionsInRange(axis, type, position, range)[0];
-				if (snapTo !== undefined && (diff = Math.abs(snapTo - position)) < closestDiff) {
+				if (snapTo !== undefined && (snapTo = ~~snapTo) && (diff = Math.abs(snapTo - position)) < closestDiff) {
 					closestDiff = diff;
 					res = {
 						"adjustTo": type !== "items" ? type : "itemsStart",
-						"snapTo": parseInt(snapTo),
+						"snapTo": snapTo,
 						"dsObjectId": this._getPositions(axis, type)[snapTo],
 						"diff": diff,
 						"direction": snapTo > position ? 1 : -1
@@ -99,11 +109,11 @@ var SnapManager = new (Backbone.Model.extend({
 			endX: startX + width,
 			startY: startY,
 			endY: startY + height
-		}, res;
+		}, res, scaleX = ScaleManager.get("scaleX"), scaleY = ScaleManager.get("scaleY");
 
 		if (!resize) {
-			test.centerX = parseInt(startX + width/2);
-			test.centerY = parseInt(startY + height/2);
+			test.centerX = ~~(startX + width/2);
+			test.centerY = ~(startY + height/2);
 		}
 
 		res = _.extend({
@@ -158,7 +168,11 @@ var SnapManager = new (Backbone.Model.extend({
 			"_itemsCenterX": {},
 			"_itemsCenterY": {},
 			"_itemsEndX": {},
-			"_itemsEndY": {}
+			"_itemsEndY": {},
+			"_pageX": {},
+			"_pageY": {},
+			"_pageEndX": {},
+			"_pageEndY": {}
 		});
 
 		var itemAttr = ["x", "y", "centerX", "centerY", "endX", "endY"];
@@ -171,6 +185,24 @@ var SnapManager = new (Backbone.Model.extend({
 		}, this);
 		this.guides.on("remove", function (m) {
 			this._removePosition(m.get("axis"), "guides", m.get("position"), m.get("id"));
+		}, this);
+
+		root.demand(["page"], function () {
+			var isSet = false;
+			root.page.on("change", function (m, c) {
+				if (c && c.changes && (c.changes.width || c.changes.height)) {
+					if (!isSet) {
+						this._addPosition("x", "page", 0, "ds-canvas-page");
+						this._addPosition("y", "page", 0, "ds-canvas-page");
+						this._addPosition("x", "pageEnd", m.get("width"), "ds-canvas-page");
+						this._addPosition("Y", "pageEnd", m.get("height"), "ds-canvas-page");
+						isSet = true;
+					} else {
+						this._changePosition("x", "pageEnd", m.get("width"), "ds-canvas-page");
+						this._changePosition("y", "pageEnd", m.get("height"), "ds-canvas-page");
+					}
+				}
+			}, this)
 		}, this);
 
 		this.items.on("add", function (m) {

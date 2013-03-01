@@ -2,51 +2,49 @@
 <html>
 	<head>
 		<title>Canvas</title>
+		<meta charset="utf-8">
 		<link href="base.css" rel="stylesheet" type="text/css" />
 		<link href="canvas-base.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
 		<div class="ds-canvas">
-			<div class="ds-canvas-viewport">
-				<div class="ds-canvas-scrollport">
-					<div class="ds-canvas-templatelayer">
-						<div class="ds-canvas-page"></div>
-					</div>
-					<div class="ds-canvas-contentlayer">
-						<div class="ds-canvas-page"></div>
-					</div>
-					<div class="ds-canvas-metalayer">
-						<div class="ds-canvas-page"></div>
-					</div>
-				</div>
-			</div>
 			<div class="ds-canvas-ruler-container ds-canvas-ruler-container-vertical">
 				<div class="ds-canvas-ruler ds-canvas-ruler-vertical"></div>
+				<div class="ds-canvas-ruler-coordindicator-vertical"></div>
 			</div>
 			<div class="ds-canvas-ruler-container ds-canvas-ruler-container-horizontal">
 				<div class="ds-canvas-ruler ds-canvas-ruler-horizontal"></div>
+				<div class="ds-canvas-ruler-coordindicator-horizontal"></div>
 			</div>
+			<div class="ds-canvas-ruler-corner"></div>
 		</div>
 		<!-- Framework-Layer -->
-		<script type="text/javascript" src="jquery.js"></script>
-		<script type="text/javascript" src="underscore.js"></script>
-		<script type="text/javascript" src="backbone.js"></script>
+		<script type="text/javascript" src="jquery-1-9-0.js" defer></script>
+		<script type="text/javascript" src="underscore.js" defer></script>
+		<script type="text/javascript" src="backbone.js" defer></script>
 
 		<!-- Polyfill- and Plugin-Layer -->
-		<script type="text/javascript" src="Underscore-Mixins.js"></script>
-		<script type="text/javascript" src="jquery.keybind.js"></script>
-		<script type="text/javascript" src="ds-keybinder.js"></script>
-		<script type="text/javascript" src="ds-undo.js"></script>
+		<script type="text/javascript" src="Underscore-Mixins.js" defer></script>
+		<script type="text/javascript" src="jquery.keybind.js" defer></script>
+		<script type="text/javascript" src="jquery-extensions.js" defer></script>
+		<script type="text/javascript" src="ds-keybinder.js" defer></script>
+		<script type="text/javascript" src="ds-undo.js" defer></script>
 
 		<!-- Application-Core-Layer -->
-		<script type="text/javascript" src="ds-Core.js"></script>
-		<script type="text/javascript" src="ds-Documenttree.js"></script>
-		<script type="text/javascript" src="ds-Canvas-Guides.js"></script>
-		<script type="text/javascript" src="ds-Canvas-Items.js"></script>
-		<script type="text/javascript" src="ds-Canvas-Snapmanager.js"></script>
-		<script type="text/javascript" src="ds-Canvas-Selectmanager.js"></script>
-		<script type="text/javascript" src="ds-Eventmanager.js"></script>
-		<script type="text/javascript" src="ds-Canvas-Viewportmanager.js"></script>
-		<script type="text/javascript" src="ds-canvas.js"></script>
+		<script type="text/javascript" src="ds-Core.js" defer></script>
+		<script type="text/javascript" src="ds-Documenttree.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Sizemanager.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Scrollmanager.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Scalemanager.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Positionmanager.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Guides.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Items.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Snapmanager.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Selectmanager.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Eventmanager.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Viewportmanager.js" defer></script>
+		<script type="text/javascript" src="ds-Canvas-Ruler.js" defer></script>
+		<script type="text/javascript" src="testdata.js" defer></script>
 	</body>
 </html>

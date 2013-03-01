@@ -1,4 +1,5 @@
 (function (root, global, Backbone, _, $) {
+	return;
 	if (!root || !global || !Backbone || !_ || !$) return;
 
 	var Viewport = new (Backbone.Model.extend({
@@ -9,12 +10,6 @@
 		initialize: function () {
 			console.log("hier")
 			$(".ds-canvas-viewport").on("scroll", function(e) {console.log("aha")});
-		},
-		scroll: function (e) {
-			console.log("hi")
-		},
-		events: {
-			"scroll": "scroll"
 		}
 	}))({
 		el: $(".ds-canvas")

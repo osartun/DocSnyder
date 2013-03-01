@@ -1,6 +1,8 @@
 (function (root, global, Backbone, _, $) {
 	if (!root || !global || !Backbone || !_ || !$) return;
 
+	var Canvas = root.Canvas;
+
 	/* Guides */
 	var Guide = Backbone.Model.extend({
 			validate: function(a) {
@@ -36,24 +38,36 @@
 		this.collection.on("change", this._changeGuide, this);
 		this.collection.on("remove", this._removeGuide, this);
 
-		this.meta = this.$(".ds-canvas-metalayer");
-		this.content = this.$(".ds-canvas-contentlayer");
+		this.meta = this.$(".ds-canvas-metalayer").eq(0);
+		this.content = this.$(".ds-canvas-contentlayer").eq(0);
 		this._guideList = {};
+
+		this.pageOffset = {top: 0, left: 0};
+		Canvas.on("setup", function (data) {
+			this.pageOffset = {
+				top: data.pageStartY,
+				left: data.pageStartX
+			};
+			this._pageOffsetChanged();
+		}, this);
+	},
+	_pageOffsetChanged: function () {
+		this.collection.each(this._changeGuide, this);
 	},
 	_addGuide: function (m) {
 		var guide = m; 
-		this._guideList[guide.get("id")] = $("<div class='ds-canvas-guide' id='" + guide.get("id") + "' />").appendTo(this.meta);
+		this._guideList[guide.get("id")] = $("<div class='ds-canvas-guide ds-scale' id='" + guide.get("id") + "' />").data("scaleproperty", "top left").appendTo(this.meta);
 		this._changeGuide(m);
 	},
 	_changeGuide: function (m) {
 		var guide = m, guideEl = this.getGuideById(guide);
 		if (guide.get("axis") === "y") {
 			guideEl.addClass("ds-canvas-guide-horizontal").css({
-				top: guide.get("position") + "px"
+				top: (this.pageOffset.top + guide.get("position")) + "px"
 			})
 		} else {
 			guideEl.addClass("ds-canvas-guide-vertical").css({
-				left: guide.get("position") + "px"
+				left: (this.pageOffset.left + guide.get("position")) + "px"
 			})
 		}
 	},
@@ -75,7 +89,7 @@
 				this.dragGuide = e.dsObject;
 			}
 
-			e.$target.css(attribute, position);
+			e.$target.css(attribute, position + this.pageOffset[attribute]);
 
 			if (e.type === "dragend") {
 				this.dragGuide.set("position", position);

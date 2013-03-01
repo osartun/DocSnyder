@@ -17,15 +17,22 @@ var SelectManager = new (Backbone.Model.extend({
 		return obj instanceof Page;
 	},
 	isSelected: function (obj) {
-		return typeof obj.get === "function" && (obj.get("id") in (this._isItem(obj) ? this.selectedItems : this.selectedPages));
+		var id;
+		switch (typeof obj) {
+			case "string": // We assume, it's the id.
+				id = obj; break;
+			case "object": // We assume, it's the instance
+				typeof obj.get !== "function" || (id = obj.get("id")); break;
+		}
+		return id && id in this.selectedItems || id in this.selectedPages;
 	},
 	select: function (obj) {
 		if (_.isArray(obj)) {
 			return _.each(obj, this.select, this);
 		}
-		var isItem = this._isItem(obj);
+		var id = obj.get("id"), isItem = this._isItem(obj);
 		if (!this.isSelected(obj) && (isItem || this._isPage(obj))) {
-			(isItem ? this.selectedItems : this.selectedPages)[obj.get("id")] = obj;
+			(isItem ? this.selectedItems : this.selectedPages)[id] = obj;
 			this.trigger("select", {
 				type: "select",
 				dsObjectType: isItem ? "item" : "page",
@@ -54,11 +61,12 @@ var SelectManager = new (Backbone.Model.extend({
 			return _.each(obj, this.toggleSelect, this);
 		}
 		var isItem = this._isItem(obj);
-		if (typeof stateVal !== "boolean") {
-			stateVal = !this.isSelected(obj);
-		}
 		if (isItem || this._isPage(obj)) {
 			// is valid
+
+			if (typeof stateVal !== "boolean") {
+				stateVal = !this.isSelected(obj);
+			}
 			this[stateVal ? "select" : "unselect"](obj);
 		}
 	},
@@ -70,6 +78,9 @@ var SelectManager = new (Backbone.Model.extend({
 	},
 	unselectAll: function () {
 		this.unselect(_.values(this.selectedItems));
+	},
+	getSelectedItems: function () {
+		return _.values(this.selectedItems);
 	}
 }))({
 	"itemList": itemList
@@ -83,30 +94,34 @@ var SelectManagerView = new (Backbone.View.extend({
 		this.collection.on("change", this._changeSelectionFrame, this);
 		this.collection.on("remove", this._removeSelectionFrame, this);
 
-		this.meta = this.$(".ds-canvas-metalayer");
-		this.content = this.$(".ds-canvas-contentlayer");
+		this.meta = this.$(".ds-canvas-metalayer").eq(0);
+		this.metapage = this.meta.find(".ds-canvas-page").eq(0);
+		this.content = this.$(".ds-canvas-contentlayer").eq(0);
 
 		this.selectionFrames = {};
 
 		var handles = _.map("nw n ne e se s sw w".split(" "), function (dir) {
 			return "<div class='ds-canvas-selectframe-handle ds-canvas-selectframe-handle-" + dir + "' data-direction='" + dir + "'></div>";
 		});
-		this.selectFrame = $("<div class='ds-canvas-selectframe'>" + handles.join("") + "</div>");
-		this.multipleSelectFrame = $("<div class='ds-canvas-multipleselect' />").appendTo(this.meta);
+		this.selectFrame = $("<div class='ds-canvas-selectframe ds-scale'>" + handles.join("") + "</div>");
+		this.multipleSelectFrame = $("<div class='ds-canvas-multipleselect ds-scale' />").data("scaleproperty", "top left width height").appendTo(this.metapage);
 	},
 	getSelectionFrameById: function (id) {
 		return this.selectionFrames[typeof id === "string" ? id : (id instanceof Item ? id.get("id") : undefined)];
 	},
 	_addSelectionFrame: function (item) {
-		var s = this.selectFrame.clone().css({
+		var s = this.selectFrame.clone().data({
+						"scaleproperty": "top left width height",
+						"itemid": item.get("id")
+					}).css({
 						top: item.y,
 						left: item.x,
 						width: item.width,
 						height: item.height,
-						webkitTransform: item.transform
-					}).attr("data-itemId", item.get("id"));
+						transform: item.transform
+					});
 		this.selectionFrames[item.get("id")] = s;
-		this.meta.append(s);
+		this.metapage.append(s);
 	},
 	_changeSelectionFrame: function (item) {
 		this.getSelectionFrameById(item).css({
@@ -114,13 +129,16 @@ var SelectManagerView = new (Backbone.View.extend({
 			left: item.x,
 			width: item.width,
 			height: item.height,
-			webkitTransform: item.transform
+			transform: item.transform
 		});
 	},
 	_removeSelectionFrame: function (m) {
 		this.getSelectionFrameById(m).remove();
 		delete this.selectionFrames[m.get("id")];
 	},
+	/**
+	 * This is the selection frame to select items.
+	 */
 	drawSelection: function (e) {
 		if (e.dsType === "none") {
 			switch (e.type) {
@@ -174,8 +192,9 @@ var SelectManagerView = new (Backbone.View.extend({
 		this.getSelectionFrameById(e.dsObjectId).removeClass("ds-selected");
 	},
 	checkForSelect: function (e) {
-		if (e.dsType === "item") {
-			SelectManager.selectOnly(e.dsObject);
+		if (!e.isProcessed) return;
+		if (e.dsType === "selectframe" || e.dsType === "selectframe-handle") {
+			SelectManager.selectOnly(e.dsObject.dsObject);
 		} else {
 			SelectManager.unselectAll();
 		}

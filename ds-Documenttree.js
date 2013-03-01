@@ -116,6 +116,7 @@ var page = new Page({
 
 root.supply({
 	"Item": Item,
+	"Page": Page,
 	"page": page,
 	"itemList": itemList
 })

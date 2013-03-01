@@ -25,8 +25,8 @@ var dsItemView = new (Backbone.View.extend({
 			});
 		}, this);
 
-		this.meta = this.$(".ds-canvas-metalayer");
-		this.content = this.$(".ds-canvas-contentlayer");
+		this.meta = this.$(".ds-canvas-metalayer .ds-canvas-page").eq(0);
+		this.content = this.$(".ds-canvas-contentlayer .ds-canvas-page").eq(0);
 
 		this.cache = {};
 		this._itemList = {};
@@ -58,9 +58,10 @@ var dsItemView = new (Backbone.View.extend({
 		}
 	},
 	move: function (e) {
-		if(e.dsType === "item") {
-			var targets = e.$target.add(SelectManagerView.getSelectionFrameById(e.dsObjectId)),
-				item = e.dsObject;
+		if(e.dsType === "selectframe") {
+			var data = e.dsObject,
+				targets = e.$target.add(data.itemEl),
+				item = data.dsObject;
 
 			if (e.type === "dragstart") {
 				this.positionInTarget = e.getPositionInTarget();
@@ -70,6 +71,7 @@ var dsItemView = new (Backbone.View.extend({
 				snap;
 
 			snap = SnapManager.snapRectangle(x, y, item.width, item.height);
+
 
 			targets.css(snap.cssPosition);
 
@@ -98,7 +100,7 @@ var dsItemView = new (Backbone.View.extend({
 			}
 
 			if (e.type === "dragstart") {
-				data.$itemEl.css("webkitTransformOrigin", "0 0");
+				data.$itemEl.css("transformOrigin", "0 0");
 				// x-Axis
 				if (data.direction === "n" || data.direction === "s" || data.direction.indexOf("e") > -1) {
 					fixedHandle.x = item.x;
@@ -138,12 +140,12 @@ var dsItemView = new (Backbone.View.extend({
 
 			if (e.type !== "dragend") {
 				data.$itemEl.css(_.extend({
-					"webkitTransform": "rotate(" + item.rotation + "deg) scaleX(" + scaleX + ") scaleY(" + scaleY + ")",
+					"transform": "rotate(" + item.rotation + "deg) scaleX(" + scaleX + ") scaleY(" + scaleY + ")",
 				}, snapData.cssPosition));
 			} else {
 				data.$itemEl.css(_.extend({
-					"webkitTransformOrigin": item.transformOrigin,
-					"webkitTransform": item.transform
+					"transformOrigin": item.transformOrigin,
+					"transform": item.transform
 				}, snapData.cssPosition, snapData.cssDimension));
 				data.dsObject.set(_.extend({
 					x: snapData.x,
