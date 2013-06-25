@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>layout-test</title>
+	<link rel="stylesheet" href="table-app-layout.css" />
+</head>
+<body>
+	<script src="Lao.js"></script>
+	<script>
+		var l = new Lao.Container({
+			orient: Lao.HORIZONTAL,
+			foobar: "foo",
+			heyho: "hey",
+			drei: 3,
+			top: {
+				height: 50
+			},
+			center: {
+				height: "stretch"
+			},
+			bottom: {
+				height: 100
+			}
+		});
+		console.log(l);
+	</script>
+</body>
+</html>

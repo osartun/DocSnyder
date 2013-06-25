@@ -4,6 +4,8 @@
 
 	var ScrollManager = new (Backbone.Model)({scrollTop: 0, scrollLeft: 0});
 
+	var counter = 0;
+
 	new (Backbone.View.extend({
 		initialize: function () {
 			this._checkOffset = _.bind(this._checkOffset, this);

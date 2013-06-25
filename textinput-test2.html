@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Textinput test</title>
+	<style>
+		body {
+			position: relative;
+			margin: 0;
+		}
+		#input-0, #input-1, #input-2 {
+			white-space: pre-wrap;
+			width: 300px;
+			height: 150px;
+			border: 2px inset;
+			padding: 0;
+			resize: none;
+			font: inherit;
+		}
+
+		.overlay {
+			background: rgba(255,0,0,0.1);
+			width: 302px;
+			height: 150px;
+			position: absolute;
+			left: 2px;
+		}
+
+		#overlay-0 {
+			top: 2px;
+		}
+
+		#overlay-1 {
+			top: 160px;
+		}
+
+		#overlay-2 {
+			top: 314px;
+		}
+	</style>
+</head>
+<body>
+	<iframe id="input-0" frameborder="1">
+		Test
+	</iframe>
+	<div class="overlay" id="overlay-0"></div>
+
+	<div id="input-1" contenteditable>Test</div>
+	<div class="overlay" id="overlay-1"></div>
+
+	<script>
+		var 
+		iframe = document.getElementById("input-0"),
+		doc = iframe.contentDocument,
+		bod = doc.body,
+		sty = bod.style;
+		doc.designMode = "on";
+		bod.innerHTML = "Test";
+		sty.margin = 0;
+	</script>
+
+	<script>
+		function indexOf(el) {
+			var i = 0;
+			while (el && (el = el.previousSibling)) {
+				if (el.nodeType === 1) i++;
+			}
+			return i;
+		}
+		
+		document.addEventListener("mousedown", function (e) {
+			var target = e.target,
+			idNr, hiddenTarget, content,
+			letterContainer, letterContainerContent, letter, letterIndex;
+			if (target.className === "overlay") {
+				idNr = target.id.substr(-1);
+				hiddenTarget = document.getElementById("input-" + idNr);
+
+				target.style.display = "none";
+
+				letterContainer = document.elementFromPoint(e.pageX, e.pageY);
+				letterContainerContent = letterContainer.innerHTML || "";
+
+				letterContainer.innerHTML = "<span>" + letterContainerContent.split("").join("</span><span>") + "</span>";
+				letter = document.elementFromPoint(e.pageX, e.pageY);
+
+				letterIndex = indexOf(letter);
+				letterContainer.innerHTML = letterContainerContent;
+
+				target.style.display = "";
+
+				console.log(letterIndex);
+			}
+		})
+	</script>
+</body>
+</html>

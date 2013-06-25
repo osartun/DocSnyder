@@ -23,9 +23,6 @@
 	}),
 	GuideList = Backbone.Collection.extend({
 		model: Guide,
-		initialize: function() {
-			UndoManager.register(this);
-		},
 		getGuideById: function (id) {
 			return this.where({id: id})[0];
 		}

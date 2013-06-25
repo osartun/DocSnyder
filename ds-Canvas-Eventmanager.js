@@ -2,10 +2,10 @@
 	if (!root || !global || !Backbone || !_ || !$) return;
 
 var Item = root.Item,
-	itemList = root.itemList,
+	itemList = root.document.getCurrentPage().get("itemList"),
 	Guide = root.Guide,
 	guideList = root.guideList,
-	page = root.page,
+	page = root.document.getCurrentPage(),
 	dsItemView = root.ItemView,
 	ScrollManager = root.ScrollManager,
 	ScaleManager = root.ScaleManager,
@@ -16,33 +16,11 @@ var Item = root.Item,
 	el = $(".ds-canvas");
 
 /**
- * Turns internal Events into DOMEvents so that they 
- * can be caught by Backbone.View's "events"-Object. 
- * For example the "select"-Event triggered by the 
- * SelectManager.
- */
-var InternalEvents = new (Backbone.Model.extend({
-	initialize: function () {
-		this.seperator = / /;
-	},
-	_forwardEvent: function (data) {
-		if (data && typeof data === "object" && data.type && data.dsObjectId || data.dsObject) {
-			data.dsObjectId || (data.dsObjectId = data.dsObject.get("id"));
-			EventFilter.triggerEvent(EventNormalizer.normalizeEvent(data));
-		}
-	},
-	registerNewEvent: function (type, instance) {
-		if (typeof type === "string" && instance instanceof Backbone.Model || instance instanceof Backbone.Collection) {
-			instance.on(type, this._forwardEvent, this);
-		}
-	}
-}));
-
-/**
  * The MouseEventManager handles all the mouse events: 
  * mousedown, mousemove, mouseup, dragstart, drag, dragend, click.
  */
 var MouseEventManager = new (Backbone.View.extend({
+	modifierKeys: ["altKey", "ctrlKey", "metaKey", "shiftKey"],
 	initialize: function () {
 		this.cache = {
 			event: {},
@@ -70,7 +48,12 @@ var MouseEventManager = new (Backbone.View.extend({
 				type = "dragend";
 			} else {
 				// The mouse is up, but it was no drag. So, it's a click
-				type = "click";
+				var prevClick = this.cache.lastClick;
+				if (prevClick && $.now() - prevClick < 200) {
+					type = "doubleclick";
+				} else {
+					type = "click";
+				}
 			}
 		}
 		return type;
@@ -95,6 +78,7 @@ var MouseEventManager = new (Backbone.View.extend({
 				    selectHandle = underlyingElements.filter(".ds-canvas-selectframe-handle");
 				if (selectHandle.length) {
 					return {
+						"relatedTarget": e.relatedTarget,
 						"$target": selectHandle,
 						"target": selectHandle[0],
 						"dsType": "selectframe-handle"
@@ -105,6 +89,7 @@ var MouseEventManager = new (Backbone.View.extend({
 		// There is either no item selected or the current target item is selected
 		// Anyway we don't have to look for potential selectHandles lying beneath this item
 		return {
+			"relatedTarget": e.relatedTarget,
 			"target": target,
 			"$target": $target
 		}
@@ -125,32 +110,38 @@ var MouseEventManager = new (Backbone.View.extend({
 			clientY: this.cache.mousePosition.clientY
 		};
 	},
+	getModifierKeys: function (e) {
+		return _.pick(e, this.modifierKeys);
+	},
 	processEvent: function (e) {
 		if (e.isProcessed) return;
 		e.preventDefault();
 		e.stopImmediatePropagation();
 
-		if (e.type === "click") return; // We detect clicks ourselves
+		if (e.type === "click" || e.type === "dblclick") return; // We detect clicks ourselves
 
 		var type = this._normalizeType(e.type),
 			customEvent;
 
 		if (type !== e.type) {
 			EventFilter.triggerEvent(EventNormalizer.normalizeEvent(_.extend({}, e.originalEvent,
-				this.getCurrentMousePosition(), this._detectTarget(e), true)));
+				this.getCurrentMousePosition(), this._detectTarget(e), this.getModifierKeys(e), true)));
 		}
 
 		if (type === "drag" || type === "dragstart" || type === "dragend") {
 			customEvent =_.extend({}, this.cache.event, {
 				"type": type
-			}, this.getCurrentMousePosition())
+			}, this.getCurrentMousePosition(), this.getModifierKeys(e))
 		} else {
 			customEvent = EventNormalizer.normalizeEvent(_.extend({
 				type: type
-			}, this.getCurrentMousePosition(), this._detectTarget(e)), true);
+			}, this.getCurrentMousePosition(), this._detectTarget(e), this.getModifierKeys(e)), true);
 		}
 
 		this.cache.event = customEvent;
+		if (customEvent.type === "click") {
+			this.cache.lastClick = $.now();
+		}
 
 		EventFilter.triggerEvent(customEvent);
 	},
@@ -176,7 +167,8 @@ var MouseEventManager = new (Backbone.View.extend({
 		"mousedown": "processMousedown",
 		"mousemove": "processMousemove",
 		"mouseup": "processMouseup",
-		"click": "processEvent"
+		"click": "processEvent",
+		"dblclick": "processEvent"
 	}
 }))({
 	el: el
@@ -194,14 +186,9 @@ EventNormalizer = new (Backbone.Model.extend({
 	},
 	_getDOMTargetByObject: function (dsObject, dsType) {
 		if (!dsObject) return;
-		dsType || (dsType = this.getDSTargetTypeByObject(dsObject));
-		if (dsType != "none") {
-			var domNode;
-			switch (dsType) {
-				case "item": domNode = dsItemView.getItemById(dsObject.get("id")); break;
-				case "guide": domNode = dsGuideView.getGuideById(dsObject.get("id")); break;
-			}
-			return domNode;
+		switch (dsType || this.getDSTargetTypeByObject(dsObject)) {
+			case "item": return dsItemView.getItemById(dsObject.get("id"));
+			case "guide": return dsGuideView.getGuideById(dsObject.get("id"));
 		}
 	},
 	_getDSTargetTypeByNode: function (domNode, e) {
@@ -262,14 +249,16 @@ EventNormalizer = new (Backbone.Model.extend({
 					e.dsType = this._getDSTargetTypeByNode(e.target);
 				}
 			}
+
 			if (e.$target && !e.target) {
 				e.target = e.$target.get(0);
 			} else if (e.target && !e.$target) {
 				e.$target = $(e.target);
 			} else if (!e.target && !e.$target) {
 				e.$target = this._getDOMTargetByObject(e.dsObject, e.dsType);
-				e.target = e.$target.get(0);
+				e.target = e.$target[0];
 			}
+			e.timestamp || (e.timestamp = $.now());
 			e.dsObject || (e.dsObject = this._getDSTargetObjectByNode(e.dsType, e.target, e));
 			e.dsObjectId || (e.dsType === "item" || e.dsType === "guide") && (e.dsObjectId = e.dsObject.get("id"));
 			typeof e.pageX === "number" || (e.pageX = MouseEventManager.getCurrentMousePosition().pageX);
@@ -302,10 +291,8 @@ EventNormalizer = new (Backbone.Model.extend({
 					return positionInTarget;
 				};
 			})(MouseEventManager.cache.mousePosition, e.$target, e));
-/*			e.getSnapPosition || (e.getSnapPosition = (function (pX, pY, uX, uY) {
-
-			})(e.pageX, e.pageY, e.unscaledPageX, e.unscaledPageY));*/
 		}
+
 		return validate ? this.validateEvent(e) : e;
 	},
 }))({
@@ -393,16 +380,9 @@ root.demand(["SelectManager", "SelectManagerView", "ItemView"], function() {
 			el: el
 		});
 
-	InternalEvents.registerNewEvent("select unselect", SelectManager);
-
-	/*SelectManager.on("select", function (e) {
-		_(e).each(function (i,a) {
-			console.log(i,a)
-		})
-	});*/
-
 	root.supply({
-		"EventDelegator": EventFilter
+		"EventDelegator": EventFilter,
+		"EventProcessor": MouseEventManager
 	})
 });
 

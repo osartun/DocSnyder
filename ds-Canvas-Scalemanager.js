@@ -13,7 +13,7 @@
 		},
 		step: 0.2,
 		minScale: 0.1,
-		maxScale: 24,
+		maxScale: 10,
 		setScale: function (x,y) {
 			if (y == null) {
 				y = x;
@@ -60,42 +60,45 @@
 			Canvas.on("setup", function (data) {
 				this.canvasDimensions = data;
 			}, this);
-			root.demand(["page"], function () {
-				Page = root.page;
+			root.demand(["document"], function () {
+				Page = root.document.getCurrentPage();
 			}, this);
 			$(_.bind(this.attachCSSHooks, this));
 		},
 		numSplitRegExp: /^(-?[\d\.]+)(.*)/,
 		classNameOfScaleElements: "ds-scale",
 		zoom: function (m) {
-			if (!"canvasDimensions" in this) return;
-			var scaleX = m.get("scaleX"), scaleY = m.get("scaleY"),
-				scaleFactorX = scaleX / m.previous("scaleX"), scaleFactorY = scaleY / m.previous("scaleY");
+			if (!this.canvasDimensions) return;
+			var canvasDimensions = this.canvasDimensions,
+				scaleX = m.get("scaleX"), scaleY = m.get("scaleY"),
+				scaleFactorX = scaleX / m.previous("scaleX"), scaleFactorY = scaleY / m.previous("scaleY"),
+				viewportWidth = SizeManager.get("width"), viewportHeight = SizeManager.get("height");
 
-			if (this.canvasDimensions.width * scaleX < SizeManager.get("width")
-				|| this.canvasDimensions.height * scaleY < SizeManager.get("height")) {
-				// The canvas is smaller than the container. Don't let this happen!
+			if (canvasDimensions.width * scaleX < viewportWidth
+				|| canvasDimensions.height * scaleY < viewportHeight) {
+				// The canvas is smaller than the viewport. Don't let this happen!
 				Canvas.set({
-					width: Math.max(this.canvasDimensions.width / scaleX, SizeManager.get("width")),
-					height: Math.max(this.canvasDimensions.height / scaleY, SizeManager.get("height"))
+					width: Math.max(viewportWidth / scaleX, viewportWidth),
+					height: Math.max(viewportHeight / scaleY, viewportHeight)
 				});
+				canvasDimensions = this.canvasDimensions;
 				// So. Now, go on.
 			}
 
 			var pageWidth = Page.get("width") * scaleX,
 				pageHeight = Page.get("height") * scaleY,
-				canvasWidth = this.canvasDimensions.width * scaleX,
-				canvasHeight = this.canvasDimensions.height * scaleY,
-				offsetTop = this.canvasDimensions.pageStartY * scaleX,
-				offsetLeft = this.canvasDimensions.pageStartX * scaleY,
+				canvasWidth = canvasDimensions.width * scaleX,
+				canvasHeight = canvasDimensions.height * scaleY,
+				offsetTop = canvasDimensions.pageStartY,
+				offsetLeft = canvasDimensions.pageStartX,
 				numSplitRegExp = this.numSplitRegExp;
 			this.templatelayer.add(this.contentlayer).css({
 				"transform": "scaleX(" + scaleX + ") scaleY(" + scaleY + ")"
 			});
 			this.metapage.css({
-				width: pageWidth + (scaleX < 1 ? 2 * scaleX : 2 / scaleX),
-				height: pageHeight + (scaleY < 1 ? 2 * scaleY : 2 / scaleY),
-				borderWidth: offsetTop + "px " + (offsetLeft - 2) + "px " + (offsetTop - 2) + "px " + offsetLeft + "px"
+				width: pageWidth,
+				height: pageHeight,
+				borderWidth: Math.round(offsetTop * scaleY) + "px " + Math.round(offsetLeft * scaleX) + "px"
 			})
 			this.metalayer.add(this.$el).width(canvasWidth).height(canvasHeight)
 			.end().find("." + this.classNameOfScaleElements).each(function () {
@@ -113,6 +116,9 @@
 			var sizeWidthHalf = SizeManager.get("width") / 2, sizeHeightHalf = SizeManager.get("height") / 2,
 				scrollTop = ScrollManager.get("scrollTop"), scrollLeft = ScrollManager.get("scrollLeft");
 
+			// Correct scrollTop and scrollLeft so that the point 
+			// that had been in the center before the scaling is
+			// now again in the center
 			scrollTop = ~~Math.round((scrollTop + sizeHeightHalf) * scaleFactorY - sizeHeightHalf), 
 			scrollLeft = ~~Math.round((scrollLeft + sizeWidthHalf) * scaleFactorX - sizeWidthHalf);
 			ScrollManager.set({

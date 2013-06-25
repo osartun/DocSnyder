@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Keybinding-Test</title>
+</head>
+<body>
+	Hallo
+	<script src="jquery.js"></script>
+	<script src="jquery.Shortcut.js"></script>
+	<script>
+		function fn (e) {
+			console.log(e.shortcut);
+		}
+		var bindings = $.Shortcut.on({
+			"LEFT": fn,
+			"UP": fn,
+			"DOWN": fn,
+			"RIGHT": fn,
+			"meta + C": fn
+		})
+	</script>
+</body>
+</html>

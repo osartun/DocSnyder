@@ -1,10 +1,9 @@
 .ds-canvas {
 	position: absolute;
-	width: 99%;
-	height: 99%;
+	width: 100%;
+	height: 100%;
 	margin: 0;
 	padding: 0;
-	border: 1px solid #000;
 	overflow: hidden;
 }
 .ds-canvas-viewport {
@@ -94,15 +93,13 @@
 }
 .ds-canvas-item {
 	position: absolute;
-	background: red;
 	overflow: hidden;
 }
-.ds-canvas-item-selected {
-	
+.ds-canvas-selectframe.ds-selected {
+	border: 1px solid rgba(128,128,128,0.3);
 }
 .ds-canvas-selectframe {
 	position: absolute;
-	border: 1px solid rgba(128,128,128,0.3);
 	box-sizing: border-box;
 }
 .ds-canvas-selectframe-handle {
@@ -282,7 +279,6 @@
 	height: 14px;
 	border-left: 1px dotted #000;
 	top: 0;
-	margin-left: 1px;
 }
 .ds-canvas-ruler-coordindicator-vertical {
 	position: absolute;
@@ -290,5 +286,4 @@
 	height: 1px;
 	border-top: 1px dotted #000;
 	left: 0;
-	margin-top: 1px;
 }

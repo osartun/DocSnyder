@@ -8,7 +8,6 @@
 
 	var ViewportEventprocessor = new (Backbone.View.extend({
 		initialize: function () {
-			console.log("hier")
 			$(".ds-canvas-viewport").on("scroll", function(e) {console.log("aha")});
 		}
 	}))({

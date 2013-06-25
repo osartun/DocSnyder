@@ -4,19 +4,33 @@
 		<title>Canvas</title>
 		<meta charset="utf-8">
 		<link href="base.css" rel="stylesheet" type="text/css" />
+		<link href="app.css" rel="stylesheet" type="text/css" />
 		<link href="canvas-base.css" rel="stylesheet" type="text/css" />
 	</head>
 	<body>
-		<div class="ds-canvas">
-			<div class="ds-canvas-ruler-container ds-canvas-ruler-container-vertical">
-				<div class="ds-canvas-ruler ds-canvas-ruler-vertical"></div>
-				<div class="ds-canvas-ruler-coordindicator-vertical"></div>
+		<div class="ds-app">
+			<div class="ds-app-item ds-toolbar">
+				<ul class="ds-tools">
+					<li class="ds-tool">Default</li>
+					<li class="ds-tool"></li>
+					<li class="ds-tool"></li>
+					<li class="ds-tool"></li>
+					<li class="ds-tool"></li>
+				</ul>
 			</div>
-			<div class="ds-canvas-ruler-container ds-canvas-ruler-container-horizontal">
-				<div class="ds-canvas-ruler ds-canvas-ruler-horizontal"></div>
-				<div class="ds-canvas-ruler-coordindicator-horizontal"></div>
+		</div>
+		<div class="ds-canvas-container">
+			<div class="ds-canvas">
+				<div class="ds-canvas-ruler-container ds-canvas-ruler-container-vertical">
+					<div class="ds-canvas-ruler ds-canvas-ruler-vertical"></div>
+					<div class="ds-canvas-ruler-coordindicator-vertical"></div>
+				</div>
+				<div class="ds-canvas-ruler-container ds-canvas-ruler-container-horizontal">
+					<div class="ds-canvas-ruler ds-canvas-ruler-horizontal"></div>
+					<div class="ds-canvas-ruler-coordindicator-horizontal"></div>
+				</div>
+				<div class="ds-canvas-ruler-corner"></div>
 			</div>
-			<div class="ds-canvas-ruler-corner"></div>
 		</div>
 		<!-- Framework-Layer -->
 		<script type="text/javascript" src="jquery-1-9-0.js" defer></script>

@@ -60,7 +60,6 @@
 				this._redoStack.unshift(undo);
 				this.ignoreNextEvent = undo.ignoreNextEvent.undo;
 				undo.undo.call(undo.obj, undo.data);
-				console.log(this.toString());
 			}
 		},
 		redo: function () {
@@ -69,7 +68,6 @@
 				this._undoStack.push(redo);
 				this.ignoreNextEvent = redo.ignoreNextEvent.redo;
 				redo.redo.call(redo.obj, redo.data);
-				console.log(this.toString());
 			}
 		},
 		_addListeners: function (obj) {

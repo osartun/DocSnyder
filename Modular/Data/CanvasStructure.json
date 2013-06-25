@@ -1,0 +1,29 @@
+[
+	{
+		"className": "canvas-container",
+		"children": [{
+			"className": "canvas",
+			"children": [{
+				"className": ["ruler-container", "ruler-container-horizontal"],
+				"children": [{
+						"className": ["ruler", "ruler-vertical"]
+					}, {
+						"className": "ruler-coordindicator-vertical"
+						}]
+				}, {
+					"className": ["ruler-container", "ruler-container-vertical"],
+					"children": [{
+						"className": ["ruler", "ruler-horizontal"]
+					}, {
+						"className": "ruler-coordindicator-horizontal"
+						}]
+				}, {
+					"className": "ruler-corner",
+					"children": []
+				}, {
+					"className": "viewport",
+					"children": []
+				}]
+			}]
+	}
+]

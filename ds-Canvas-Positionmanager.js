@@ -2,8 +2,13 @@
 	var ScrollManager = root.ScrollManager,
 		ScaleManager = root.ScaleManager,
 		pageOffset = {top: 0, left: 0},
-		Canvas = root.Canvas;
+		Canvas = root.Canvas,
+		containerOffset = $(".ds-canvas").offset();
 
+	//root.demand("Sizemanager")
+	root.SizeManager.on("change", function () {
+		containerOffset = $(".ds-canvas").offset();
+	})
 
 	Canvas.on("setup", function (e) {
 		pageOffset = {
@@ -24,6 +29,10 @@
 			if (typeof y !== "number") {
 				y = parseFloat(y);
 			}
+			
+			x -= containerOffset.left || 0,
+			y -= containerOffset.top || 0;
+
 			if (ScrollManager) {
 				x += scrollLeft;
 				y += scrollTop;
@@ -34,6 +43,7 @@
 			}
 			x -= pageOffset.left;
 			y -= pageOffset.top;
+
 			return {
 				pageX: x,
 				pageY: y

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Main</title>
+		<meta charset="UTF-8">
+		<link href="base.css" rel="stylesheet" type="text/css" />
+		<link href="app.css" rel="stylesheet" type="text/css" />
+		<link href="canvas-base.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="tools.css" />
+		<link rel="stylesheet" href="toolbars.css" />
+		<link rel="stylesheet" href="Lao/css/Lao.css" />
+	</head>
+	<body>
+		<div class="ds-canvas-container">
+			<div class="ds-canvas">
+				<div class="ds-canvas-ruler-container ds-canvas-ruler-container-vertical">
+					<div class="ds-canvas-ruler ds-canvas-ruler-vertical"></div>
+					<div class="ds-canvas-ruler-coordindicator-vertical"></div>
+				</div>
+				<div class="ds-canvas-ruler-container ds-canvas-ruler-container-horizontal">
+					<div class="ds-canvas-ruler ds-canvas-ruler-horizontal"></div>
+					<div class="ds-canvas-ruler-coordindicator-horizontal"></div>
+				</div>
+				<div class="ds-canvas-ruler-corner"></div>
+			</div>
+		</div>
+
+		<!-- Framework-Layer -->
+		<script src="jquery-1.9.1.js" defer></script>
+		<script src="underscore.js" defer></script>
+		<script src="backbone.js" defer></script>
+
+		<!-- Lao -->
+		<script src="Lao/js/Lao.js" defer></script>
+		<script src="Lao/js/Lao.Utilities.js" defer></script>
+		<script src="Lao/js/Lao.List.js" defer></script>
+		<script src="Lao/js/Lao.SelectableList.js" defer></script>
+		<script src="Lao/js/Lao.Table.js" defer></script>
+		<script src="Lao/js/Lao.Toolbar.js" defer></script>
+		<script src="Lao/js/Lao.Dropdown.js" defer></script>
+
+		<!-- Polyfill- and Plugin-Layer -->
+		<script src="Underscore-Mixins.js" defer></script>
+		<script src="jquery.Shortcut.js" defer></script>
+		<script src="jquery.simulate.js" defer></script>
+		<script src="jquery-extensions.js" defer></script>
+		<script src="Backbone.Undo.js" defer></script>
+		<script src="parseSelector.js" defer></script>
+		<script src="../Custom Cursor/customCursor.js" defer></script>
+
+		<!-- Application-Core-Layer -->
+		<script src="ds-Core.js" defer></script>
+		<script src="ds-Documenttree.js" defer></script>
+		<script src="ds-Canvas.js" defer></script>
+		<script src="ds-Canvas-Sizemanager.js" defer></script>
+		<script src="ds-Canvas-Scrollmanager.js" defer></script>
+		<script src="ds-Canvas-Scalemanager.js" defer></script>
+		<script src="ds-Canvas-Positionmanager.js" defer></script>
+		<script src="ds-Canvas-Guides.js" defer></script>
+		<script src="ds-Canvas-Items.js" defer></script>
+		<script src="ds-Canvas-Snapmanager.js" defer></script>
+		<script src="ds-Canvas-Selectmanager.js" defer></script>
+		<script src="ds-Canvas-Eventmanager.js" defer></script>
+		<script src="ds-Canvas-Viewportmanager.js" defer></script>
+		<script src="ds-Canvas-Ruler.js" defer></script>
+		<script src="CanvasIO.js" defer></script>
+		
+		<!-- Plugins-Wrappers, binding to our namespace -->
+		<script src="Shortcut.js" defer></script>
+		<script src="UndoManager.js" defer></script>
+
+		<!-- Item Content-types -->
+		<script src="ContentTypeRegistry.js" defer></script>
+		<script src="ContentTypes/ImageItem.js" defer></script>
+		<script src="ContentTypes/PlainItem.js" defer></script>
+		<script src="ContentTypes/TextItem.js" defer></script>
+		<script src="ItemController.js" defer></script>
+
+		<!-- Tools -->
+		<script src="ToolManager.js" defer></script>
+		<script src="Tools/Default.js" defer></script>
+		<script src="Tools/Text.js" defer></script>
+
+		<!-- Toolbar -->
+		<script src="ToolbarManager.js" defer></script>
+		<script src="Toolbars/Text.js" defer></script>
+
+		<!-- Assembling our App -->
+		<script src="ZoomIndicator.js" defer></script>
+		<script src="testsetup.js" defer></script>
+	</body>
+</html>

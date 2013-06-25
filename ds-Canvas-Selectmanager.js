@@ -3,12 +3,20 @@
 
 var Item = root.Item,
 	Page = root.Page,
-	itemList = root.itemList;
+	itemList = root.document.getCurrentPage().get("itemList");
 
 var SelectManager = new (Backbone.Model.extend({
-	initialize: function () {
+	initialize: function (attr) {
 		this.selectedItems = {};
 		this.selectedPages = {};
+
+		attr.itemList
+		.on("remove", function (m) {
+			if (this.isSelected(m)) {
+				_.delay(function (self) {self.unselect(m);}, 16, this);
+			}
+		}, this)
+		.on("reset", this.unselectAll, this);
 	},
 	_isItem: function (obj) {
 		return obj instanceof Item;
@@ -47,6 +55,7 @@ var SelectManager = new (Backbone.Model.extend({
 		}
 		var isItem = this._isItem(obj);
 		if (this.isSelected(obj) && (isItem || this._isPage(obj))) {
+			//debugger;
 			delete (isItem ? this.selectedItems : this.selectedPages)[obj.get("id")];
 			this.trigger("unselect", {
 				type: "unselect",
@@ -94,6 +103,10 @@ var SelectManagerView = new (Backbone.View.extend({
 		this.collection.on("change", this._changeSelectionFrame, this);
 		this.collection.on("remove", this._removeSelectionFrame, this);
 
+		SelectManager
+		.on("select", this.showSelectionFrame, this)
+		.on("unselect", this.hideSelectionFrame, this);
+
 		this.meta = this.$(".ds-canvas-metalayer").eq(0);
 		this.metapage = this.meta.find(".ds-canvas-page").eq(0);
 		this.content = this.$(".ds-canvas-contentlayer").eq(0);
@@ -107,7 +120,7 @@ var SelectManagerView = new (Backbone.View.extend({
 		this.multipleSelectFrame = $("<div class='ds-canvas-multipleselect ds-scale' />").data("scaleproperty", "top left width height").appendTo(this.metapage);
 	},
 	getSelectionFrameById: function (id) {
-		return this.selectionFrames[typeof id === "string" ? id : (id instanceof Item ? id.get("id") : undefined)];
+		return this.selectionFrames[typeof id === "string" ? id : (id instanceof Item ? id.get("id") : null)] || $();
 	},
 	_addSelectionFrame: function (item) {
 		var s = this.selectFrame.clone().data({

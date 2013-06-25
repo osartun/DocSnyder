@@ -1,0 +1,12 @@
+.ds-text-toolbar-select {
+	vertical-align: super;
+}
+
+.ds-text-toolbar-button {
+	padding: 0;
+}
+.ds-text-toolbar-button > div {
+	width: 22px;
+	height: 22px;
+	background-image: url(Toolbars/text-toolbar-sprite.png);
+}

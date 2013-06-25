@@ -6,7 +6,11 @@
 		SizeManager = root.SizeManager;
 	})
 
-	var Canvas = new Backbone.Model;
+	var Canvas = new (Backbone.Model.extend({
+		defaults: {
+			activeTool: "Default"
+		}
+	}));
 
 	var CanvasView = new (Backbone.View.extend({
 		initialize: function () {
@@ -24,19 +28,26 @@
 				"metaWrapper": $("<div class='" + prefix + "page-wrapper'/>").appendTo(this.metalayer)
 			};
 			this.page.meta = $("<div class='" + prefix + "page' id='" + prefix + "page' />").appendTo(this.page.metaWrapper);
-			root.demand(["page"], function () {
-				root.page.on("change", this.initCanvas, this);
+			root.demand(["document"], function () {
+				this.initCanvas();
+				root.document
+				.on("change", this.initCanvas, this)
+				.get("pageList").on("reset", this.initCanvas, this)
 			}, this);
 			Canvas.on("change", function (m,c) {
-				if (c && c.changes && (c.changes.width || c.changes.height)) {
-					this.setSize (m.get("width"), m.get("height"));
+				if (m.changed) {
+					this.setSize(m.get("width"), m.get("height"));
 				}
 			}, this);
 		},
 		setSize: function (width, height) {
-			var pageWidth = root.page.get("width"), pageHeight = root.page.get("height");
-			var offsetWidth = (width - pageWidth) / 2,
-				offsetHeight = (height - pageHeight) / 2;
+			var
+			curPage = root.document.getCurrentPage(),
+			pageWidth = curPage.get("width"),
+			pageHeight = curPage.get("height"),
+			offsetWidth = (width - pageWidth) / 2,
+			offsetHeight = (height - pageHeight) / 2;
+
 			this.scrollport.css({
 				width: width,
 				height: height
@@ -61,14 +72,17 @@
 			});
 		},
 		initCanvas: function (m,c) {
-			if (c.changes.width || c.changes.height) {
-				var width = m.get("width"), height = m.get("height"),
-					containerWidth = SizeManager ? SizeManager.get("width") : 0,
-					containerHeight = SizeManager ? SizeManager.get("height") : 0,
-					canvasWidth = Canvas.get("width") || Math.max(containerWidth, width * 3),
-					canvasHeight = Canvas.get("height") || Math.max(containerHeight, height * 3);
+			var m = root.document.getCurrentPage(),
+			width = m.get("width"), height = m.get("height"),
+			containerWidth = SizeManager ? SizeManager.get("width") : 0,
+			containerHeight = SizeManager ? SizeManager.get("height") : 0,
+			canvasWidth = Canvas.get("width") || Math.max(containerWidth, width * 3),
+			canvasHeight = Canvas.get("height") || Math.max(containerHeight, height * 3);
 
+			if (!isNaN(canvasWidth) && !isNaN(canvasHeight)) {
 				Canvas.set({
+					pageWidth: width,
+					pageHeight: height,
 					width: canvasWidth,
 					height: canvasHeight
 				});
